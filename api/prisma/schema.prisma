@@ -1,23 +1,74 @@
 generator client {
   provider = "prisma-client-js"
 }
-
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
-enum Role { ADMIN AGENT SALES VIEWER }
-enum TicketStatus { NEW OPEN PENDING ON_HOLD SOLVED CLOSED }
-enum Priority { LOW NORMAL HIGH URGENT }
-enum ChatStatus { OPEN ENDED }
-enum SenderType { AGENT CUSTOMER BOT }
-enum LeadStatus { NEW WORKING UNQUALIFIED }
-enum DealStage { PROSPECTING QUALIFIED PROPOSAL NEGOTIATION CLOSED_WON CLOSED_LOST }
-enum ActivityType { CALL MEETING NOTE TASK }
-enum CsatRating { GOOD BAD }
+enum Role {
+  ADMIN
+  AGENT
+  SALES
+  VIEWER
+}
+
+enum TicketStatus {
+  NEW
+  OPEN
+  PENDING
+  ON_HOLD
+  SOLVED
+  CLOSED
+}
+
+enum Priority {
+  LOW
+  NORMAL
+  HIGH
+  URGENT
+}
+
+enum ChatStatus {
+  OPEN
+  ENDED
+}
+
+enum SenderType {
+  AGENT
+  CUSTOMER
+  BOT
+}
+
+enum LeadStatus {
+  NEW
+  WORKING
+  UNQUALIFIED
+}
+
+enum DealStage {
+  PROSPECTING
+  QUALIFIED
+  PROPOSAL
+  NEGOTIATION
+  CLOSED_WON
+  CLOSED_LOST
+}
+
+enum ActivityType {
+  CALL
+  MEETING
+  NOTE
+  TASK
+}
+
+enum CsatRating {
+  GOOD
+  BAD
+}
 
 /* ===================== MODELS ===================== */
+
 model User {
   id             String        @id @default(cuid())
   name           String
@@ -28,13 +79,13 @@ model User {
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
 
-  ticketsAssigned Ticket[]       @relation("TicketAssignee")
+  ticketsAssigned Ticket[]        @relation("TicketAssignee")
   ticketComments  TicketComment[] @relation("TicketCommentAuthor")
   activities      Activity[]
-  ownedLeads      Lead[]         @relation("LeadOwner")
-  ownedContacts   Contact[]      @relation("ContactOwner")
-  ownedDeals      Deal[]         @relation("DealOwner")
-  auditEvents     AuditEvent[]   @relation("AuditActor")
+  ownedLeads      Lead[]          @relation("LeadOwner")
+  ownedContacts   Contact[]       @relation("ContactOwner")
+  ownedDeals      Deal[]          @relation("DealOwner")
+  auditEvents     AuditEvent[]    @relation("AuditActor")
 }
 
 model Customer {
@@ -90,7 +141,6 @@ model TicketTag {
   ticket   Ticket @relation(fields: [ticketId], references: [id])
   ticketId String
   tag      String
-
   @@id([ticketId, tag])
 }
 
@@ -117,7 +167,6 @@ model SlaPolicy {
   resolutionMins Int
   priorityScope  Priority?
   createdAt      DateTime @default(now())
-
   tickets        Ticket[]
 }
 
@@ -168,7 +217,6 @@ model Chat {
   status     ChatStatus  @default(OPEN)
   createdAt  DateTime    @default(now())
   endedAt    DateTime?
-
   messages   ChatMessage[]
 }
 
@@ -205,7 +253,6 @@ model Lead {
   status     LeadStatus  @default(NEW)
   createdAt  DateTime    @default(now())
   updatedAt  DateTime    @updatedAt
-
   activities Activity[]
 }
 
@@ -217,7 +264,6 @@ model Contact {
   ownerId    String?
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @updatedAt
-
   deals      Deal[]
   activities Activity[]
 }
@@ -237,7 +283,6 @@ model Deal {
   lossReason        String?
   createdAt         DateTime  @default(now())
   updatedAt         DateTime  @updatedAt
-
   activities        Activity[] @relation("DealActivities")
 }
 
@@ -250,7 +295,6 @@ model Activity {
   owner       User?        @relation(fields: [ownerId], references: [id])
   ownerId     String?
   createdAt   DateTime     @default(now())
-
   lead        Lead?        @relation(fields: [leadId], references: [id])
   leadId      String?
   contact     Contact?     @relation(fields: [contactId], references: [id])
@@ -269,4 +313,3 @@ model AuditEvent {
   payload     Json
   createdAt   DateTime @default(now())
 }
-
