@@ -7,15 +7,66 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum Role { ADMIN AGENT SALES VIEWER }
-enum TicketStatus { NEW OPEN PENDING ON_HOLD SOLVED CLOSED }
-enum Priority { LOW NORMAL HIGH URGENT }
-enum ChatStatus { OPEN ENDED }
-enum SenderType { AGENT CUSTOMER BOT }
-enum LeadStatus { NEW WORKING UNQUALIFIED }
-enum DealStage { PROSPECTING QUALIFIED PROPOSAL NEGOTIATION CLOSED_WON CLOSED_LOST }
-enum ActivityType { CALL MEETING NOTE TASK }
-enum CsatRating { GOOD BAD }
+enum Role {
+  ADMIN
+  AGENT
+  SALES
+  VIEWER
+}
+
+enum TicketStatus {
+  NEW
+  OPEN
+  PENDING
+  ON_HOLD
+  SOLVED
+  CLOSED
+}
+
+enum Priority {
+  LOW
+  NORMAL
+  HIGH
+  URGENT
+}
+
+enum ChatStatus {
+  OPEN
+  ENDED
+}
+
+enum SenderType {
+  AGENT
+  CUSTOMER
+  BOT
+}
+
+enum LeadStatus {
+  NEW
+  WORKING
+  UNQUALIFIED
+}
+
+enum DealStage {
+  PROSPECTING
+  QUALIFIED
+  PROPOSAL
+  NEGOTIATION
+  CLOSED_WON
+  CLOSED_LOST
+}
+
+enum ActivityType {
+  CALL
+  MEETING
+  NOTE
+  TASK
+}
+
+enum CsatRating {
+  GOOD
+  BAD
+}
 
 model User {
   id           String  @id @default(cuid())
