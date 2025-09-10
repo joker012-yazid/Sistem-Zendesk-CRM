@@ -5,7 +5,7 @@ import { PrismaClient, Ticket } from '@prisma/client';
 export class TicketsService {
   private prisma = new PrismaClient();
 
-  create(data: { subject: string; description: string; customerId: number }): Promise<Ticket> {
+  create(data: { subject: string; description: string; customerId: string }): Promise<Ticket> {
     return this.prisma.ticket.create({ data });
   }
 

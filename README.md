@@ -33,3 +33,9 @@ Web: http://localhost:8080  |  API: http://localhost:8081
 - `POST /auth/login`
 - `GET /tickets`
 - `POST /tickets`
+
+## Build API (Docker)
+
+API menggunakan Dockerfile multi-stage. Peringkat build memasang dependensi, menjalankan `pnpm prisma:generate` dan membina kod. Peringkat runtime hanya membawa masuk output build, fail Prisma dan binari Prisma daripada peringkat sebelumnya, menjadikan imej lebih kecil.
+
+Semasa build, `prisma generate` mesti dijalankan supaya klien Prisma tersedia. Prisma menggunakan `String` (cuid) sebagai jenis id, bukan integer; oleh itu `customerId` dalam DTO dan servis ditakrifkan sebagai `string`.

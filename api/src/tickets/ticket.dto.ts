@@ -1,4 +1,4 @@
-import { IsInt, IsNotEmpty, IsString } from 'class-validator';
+import { IsNotEmpty, IsString } from 'class-validator';
 
 export class TicketDto {
   @IsString()
@@ -8,6 +8,6 @@ export class TicketDto {
   @IsString()
   description: string;
 
-  @IsInt()
-  customerId: number;
+  @IsString()
+  customerId: string;
 }
