@@ -6,21 +6,14 @@ Rangka kerja asas untuk Sistem Zendesk CRM berasaskan web. Projek ini mengandung
 
 Prasyarat: Node.js 20, pnpm, Docker.
 
-1. Pasang kebergantungan dan jana klien Prisma:
-   ```bash
-   cd api && pnpm install && pnpm prisma:generate && cd ..
-   cd web && pnpm install && cd ..
-   ```
-
-2. Jalankan migrasi dan seed:
-   ```bash
-   cd api && pnpm prisma:migrate && node ../prisma/seed.ts && cd ..
-   ```
-
-3. Jalankan perkhidmatan melalui Docker Compose:
-   ```bash
-   docker compose up -d
-   ```
+```bash
+# Backend
+cd api && cp .env.example .env && pnpm install && pnpm prisma:generate && pnpm prisma:migrate && pnpm prisma:seed && cd ..
+# Frontend
+cd web && pnpm install && cd ..
+# Docker
+docker compose up -d
+```
 
 API tersedia pada `http://localhost:8081` dan web pada `http://localhost:8080` (melalui Nginx).
 
