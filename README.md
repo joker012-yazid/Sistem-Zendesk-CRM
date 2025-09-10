@@ -31,4 +31,6 @@ Dengan pnpm, struktur `node_modules` berasaskan symlink; **jangan** salin `node_
 
 Runtime perlu memasang devDependencies supaya `pnpm prisma:deploy` dalam `entrypoint.sh` dapat dijalankan. Jika mahu membuang devDependencies, boleh gunakan `pnpm dlx prisma migrate deploy` atau pindahkan pakej `prisma` ke `dependencies`.
 
+> **Nota**: Prisma memerlukan OpenSSL pada runtime; kita guna base Debian (glibc) dan pasang `openssl` untuk kestabilan. Jika mahu kekal Alpine, perlu set binary targets dan bawa masuk engine untuk musl, namun Debian adalah laluan paling stabil.
+
 Semasa build, `prisma generate` mesti dijalankan supaya klien Prisma tersedia. Prisma menggunakan `String` (cuid) sebagai jenis id, bukan integer; oleh itu `customerId` dalam DTO dan servis ditakrifkan sebagai `string`.
