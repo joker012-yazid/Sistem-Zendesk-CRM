@@ -7,20 +7,14 @@ Rangka kerja asas untuk Sistem Zendesk CRM berasaskan web. Projek ini mengandung
 Langkah ringkas (Debian):
 
 ```bash
-cd api
-cp .env.example .env
-pnpm install
-pnpm run format:lf
-pnpm run prisma:generate
-pnpm run prisma:migrate
-pnpm run prisma:seed
-cd ../web && pnpm install && cd ..
+cd api && cp .env.example .env && pnpm install && pnpm run format:lf && pnpm prisma:generate && pnpm prisma:migrate && pnpm prisma:seed
+cd ../web && pnpm install
 docker compose up -d --build
 ```
 
 Web: http://localhost:8080  |  API: http://localhost:8081
 
-> **Nota**: Fail Prisma mesti disimpan dalam encoding UTF-8 dengan line ending LF untuk mengelakkan ralat P1012.
+> **Nota**: Prisma hanya menyokong komen `//` atau `///` (bukan `/* ... */`). Fail Prisma mesti disimpan dalam encoding UTF-8 dengan line ending LF untuk mengelakkan ralat P1012.
 
 ## Endpoint Ringkas
 
