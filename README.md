@@ -4,13 +4,24 @@ Rangka kerja asas untuk Sistem Zendesk CRM berasaskan web. Projek ini mengandung
 
 ## Pemasangan
 
-Langkah ringkas (Debian):
+Terdapat dua pilihan:
 
-```bash
-cd api && cp .env.example .env && pnpm install && pnpm run format:lf && pnpm prisma:generate && pnpm prisma:migrate && pnpm prisma:seed
-cd ../web && pnpm install
-docker compose up -d --build
-```
+- Dalam container:
+  ```bash
+  docker compose up -d postgres redis
+  docker compose run --rm api pnpm prisma:generate
+  docker compose run --rm api pnpm prisma:deploy
+  docker compose run --rm api pnpm prisma:seed
+  docker compose up -d --build
+  ```
+
+- Dari host (dev cepat):
+  ```bash
+  cd api && cp .env.local .env
+  pnpm prisma:generate
+  pnpm prisma:migrate
+  pnpm prisma:seed
+  ```
 
 Web: http://localhost:8080  |  API: http://localhost:8081
 
