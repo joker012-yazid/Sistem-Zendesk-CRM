@@ -7,7 +7,7 @@
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev --name init",
     "prisma:deploy": "prisma migrate deploy",
-    "prisma:seed": "tsx prisma/seed.ts",
+    "prisma:seed": "tsx prisma/seed.ts || ts-node prisma/seed.ts",
     "format:lf": "node -e \"const fs=require('fs');const p='prisma/schema.prisma';fs.writeFileSync(p, fs.readFileSync(p,'utf8').replace(/\\r\\n/g,'\\n').replace(/\\r/g,'\\n'))\"",
     "dev": "ts-node-dev --respawn src/main.ts",
     "build": "tsc -p tsconfig.json",
@@ -38,6 +38,6 @@
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.4.5",
     "prisma": "^5.16.1",
-    "tsx": "^4.7.0"
+    "tsx": "^4.20.5"
   }
 }
