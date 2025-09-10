@@ -12,10 +12,10 @@ WORKDIR /app
 ENV NODE_ENV=production
 RUN npm i -g pnpm
 COPY package.json pnpm-lock.yaml* ./
-RUN pnpm install --prod
+RUN pnpm install
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/prisma ./prisma
-COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
+RUN pnpm prisma:generate
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 EXPOSE 8081
