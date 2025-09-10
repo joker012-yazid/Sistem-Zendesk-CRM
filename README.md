@@ -1,12 +1,13 @@
 # Sistem-Zendesk-CRM
 
 Rangka kerja asas untuk Sistem Zendesk CRM berasaskan web. Projek ini mengandungi backend NestJS + Prisma dan frontend React + Vite.
+Projek ini menggunakan `bcryptjs` untuk elak isu native binary dalam Docker.
 
 ## Container-first setup
 
 ```bash
 make db-up
-make prisma-in-container
+make prisma-in-container   # atau: docker compose run --rm api pnpm prisma migrate dev --name init
 make up
 ```
 
@@ -34,18 +35,3 @@ Runtime perlu memasang devDependencies supaya `pnpm prisma:deploy` dalam `entryp
 > **Nota**: Prisma memerlukan OpenSSL pada runtime; kita guna base Debian (glibc) dan pasang `openssl` untuk kestabilan. Jika mahu kekal Alpine, perlu set binary targets dan bawa masuk engine untuk musl, namun Debian adalah laluan paling stabil.
 
 Semasa build, `prisma generate` mesti dijalankan supaya klien Prisma tersedia. Prisma menggunakan `String` (cuid) sebagai jenis id, bukan integer; oleh itu `customerId` dalam DTO dan servis ditakrifkan sebagai `string`.
-
-## Penyelesaian build native (bcrypt)
-
-### Isu bcrypt dalam Docker
-`bcrypt` ialah modul native. Kita gunakan Debian base dan rebuild `bcrypt` dalam runtime:
-- `api/Dockerfile` memasang `build-essential python3 make g++` dan jalankan `pnpm rebuild bcrypt`.
-- Jika mahu elak native compile, tukar ke `bcryptjs` (lihat seksyen Opsyen Tanpa Native di bawah).
-
-### Jalankan projek
-```bash
-make db-up
-make prisma-in-container
-make up
-# Web: http://localhost:8080 , API: http://localhost:8081
-```
