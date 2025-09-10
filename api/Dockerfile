@@ -1,15 +1,15 @@
-# ---- build stage ----
-FROM node:20-alpine AS builder
+FROM node:20-bookworm-slim AS builder
 WORKDIR /app
+RUN apt-get update && apt-get install -y openssl ca-certificates && rm -rf /var/lib/apt/lists/*
 COPY package.json pnpm-lock.yaml* ./
 RUN npm i -g pnpm && pnpm install
 COPY . .
 RUN pnpm prisma:generate && pnpm build
 
-# ---- runtime ----
-FROM node:20-alpine
+FROM node:20-bookworm-slim
 WORKDIR /app
 ENV NODE_ENV=production
+RUN apt-get update && apt-get install -y openssl ca-certificates && rm -rf /var/lib/apt/lists/*
 RUN npm i -g pnpm
 COPY package.json pnpm-lock.yaml* ./
 RUN pnpm install
