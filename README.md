@@ -25,6 +25,10 @@ Gunakan `.env.docker` apabila menjalankan dalam container (hostname `postgres`).
 
 ## Build API (Docker)
 
-API menggunakan Dockerfile multi-stage. Peringkat build memasang dependensi, menjalankan `pnpm prisma:generate` dan membina kod. Peringkat runtime hanya membawa masuk output build, fail Prisma dan binari Prisma daripada peringkat sebelumnya, menjadikan imej lebih kecil.
+API menggunakan Dockerfile multi-stage. Peringkat build memasang dependensi, menjalankan `pnpm prisma:generate` dan membina kod.
+
+Dengan pnpm, struktur `node_modules` berasaskan symlink; **jangan** salin `node_modules/.prisma` secara hardcoded. Peringkat runtime memasang semula dependensi (termasuk `devDependencies`), membawa masuk output build dan fail Prisma, kemudian menjana klien Prisma di dalam imej akhir.
+
+Runtime perlu memasang devDependencies supaya `pnpm prisma:deploy` dalam `entrypoint.sh` dapat dijalankan. Jika mahu membuang devDependencies, boleh gunakan `pnpm dlx prisma migrate deploy` atau pindahkan pakej `prisma` ke `dependencies`.
 
 Semasa build, `prisma generate` mesti dijalankan supaya klien Prisma tersedia. Prisma menggunakan `String` (cuid) sebagai jenis id, bukan integer; oleh itu `customerId` dalam DTO dan servis ditakrifkan sebagai `string`.
