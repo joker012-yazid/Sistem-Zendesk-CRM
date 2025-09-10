@@ -6,7 +6,7 @@ RUN npm i -g pnpm && pnpm install
 COPY . .
 RUN pnpm prisma:generate && pnpm build
 
-# ---- runtime stage ----
+# ---- runtime ----
 FROM node:20-alpine
 WORKDIR /app
 ENV NODE_ENV=production
@@ -16,4 +16,7 @@ RUN pnpm install --prod
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/prisma ./prisma
 COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
-CMD ["node", "dist/main.js"]
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+EXPOSE 8081
+ENTRYPOINT ["/entrypoint.sh"]

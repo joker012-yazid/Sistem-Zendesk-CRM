@@ -1,20 +1,22 @@
-.PHONY: dev db-up prisma-gen prisma-dep seed up
+.PHONY: up down logs db-up prisma-in-container prisma-host seed
 
-dev:
-	cd api && pnpm install && pnpm prisma:generate && cd .. \
-	&& cd web && pnpm install && cd ..
+up:
+	docker compose up -d --build
+
+down:
+	docker compose down
+
+logs:
+	docker compose logs -f
 
 db-up:
 	docker compose up -d postgres redis
 
-prisma-gen:
-	docker compose run --rm api pnpm prisma:generate
+prisma-in-container:
+	./scripts/prisma-in-container.sh
 
-prisma-dep:
-	docker compose run --rm api pnpm prisma:deploy
+prisma-host:
+	./scripts/prisma-host.sh
 
 seed:
-	docker compose run --rm api pnpm prisma:seed
-
-up:
-	docker compose up -d --build
+	SEED_ON_START=true docker compose up -d --build api
