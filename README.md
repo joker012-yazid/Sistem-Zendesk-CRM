@@ -2,28 +2,17 @@
 
 Rangka kerja asas untuk Sistem Zendesk CRM berasaskan web. Projek ini mengandungi backend NestJS + Prisma dan frontend React + Vite.
 
-## Pemasangan
+## Container-first setup
 
-Terdapat dua pilihan:
-
-- Dalam container:
-  ```bash
-  docker compose up -d postgres redis
-  docker compose run --rm api pnpm prisma:generate
-  docker compose run --rm api pnpm prisma:deploy
-  docker compose run --rm api pnpm prisma:seed
-  docker compose up -d --build
-  ```
-
-- Dari host (dev cepat):
-  ```bash
-  cd api && cp .env.local .env
-  pnpm prisma:generate
-  pnpm prisma:migrate
-  pnpm prisma:seed
-  ```
+```bash
+make db-up
+make prisma-in-container
+make up
+```
 
 Web: http://localhost:8080  |  API: http://localhost:8081
+
+Gunakan `.env.docker` apabila menjalankan dalam container (hostname `postgres`). Untuk pembangunan dari host, `.env.local` menyediakan sambungan ke `localhost`. Disarankan menjalankan Prisma dalam container; jika menjalankan dari host, override `DATABASE_URL=postgresql://appuser:apppass@localhost:5432/sistem_crm?schema=public`.
 
 > **Nota**: Prisma hanya menyokong komen `//` atau `///` (bukan `/* ... */`). Fail Prisma mesti disimpan dalam encoding UTF-8 dengan line ending LF untuk mengelakkan ralat P1012.
 
