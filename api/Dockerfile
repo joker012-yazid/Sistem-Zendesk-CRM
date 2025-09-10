@@ -1,6 +1,8 @@
 FROM node:20-bookworm-slim AS builder
 WORKDIR /app
-RUN apt-get update && apt-get install -y openssl ca-certificates && rm -rf /var/lib/apt/lists/*
+# tools untuk prisma + native modules
+RUN apt-get update && apt-get install -y openssl ca-certificates \
+    build-essential python3 make g++ && rm -rf /var/lib/apt/lists/*
 COPY package.json pnpm-lock.yaml* ./
 RUN npm i -g pnpm && pnpm install
 COPY . .
@@ -9,13 +11,16 @@ RUN pnpm prisma:generate && pnpm build
 FROM node:20-bookworm-slim
 WORKDIR /app
 ENV NODE_ENV=production
-RUN apt-get update && apt-get install -y openssl ca-certificates && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y openssl ca-certificates \
+    build-essential python3 make g++ && rm -rf /var/lib/apt/lists/*
 RUN npm i -g pnpm
 COPY package.json pnpm-lock.yaml* ./
+# keep devDeps supaya ada prisma CLI ketika entrypoint
 RUN pnpm install
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/prisma ./prisma
-RUN pnpm prisma:generate
+# pastikan bcrypt native dan Prisma client bina untuk runtime ini
+RUN pnpm rebuild bcrypt && pnpm prisma:generate
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 EXPOSE 8081
