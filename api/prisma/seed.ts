@@ -1,8 +1,7 @@
-import { PrismaClient, Role, Priority, TicketStatus, DealStage } from '@prisma/client';
+import { PrismaClient, Role, Priority, TicketStatus, DealStage, ActivityType } from '@prisma/client';
 const prisma = new PrismaClient();
 
 async function main() {
-  // Admin user
   const admin = await prisma.user.upsert({
     where: { email: 'admin@example.com' },
     update: {},
@@ -11,25 +10,22 @@ async function main() {
       email: 'admin@example.com',
       phone: '0100000000',
       role: Role.ADMIN,
-      passwordHash: '$2b$10$Eo2a6m9r1gkG2vQ8Yb2E..zV8w2b3Z4T1qEoO2t6Tq5y7g9u/abcd' // ganti kemudian
+      passwordHash: '$2b$10$Eo2a6m9r1gkG2vQ8Yb2E..zV8w2b3Z4T1qEoO2t6Tq5y7g9u/abcd'
     }
   });
 
-  // SLA policies
   const standardSla = await prisma.slaPolicy.create({
     data: { name: 'Standard', firstReplyMins: 240, resolutionMins: 2880, priorityScope: null }
   });
-  const urgentSla = await prisma.slaPolicy.create({
+  await prisma.slaPolicy.create({
     data: { name: 'Urgent', firstReplyMins: 30, resolutionMins: 240, priorityScope: Priority.URGENT }
   });
 
-  // Knowledge base
   const cat = await prisma.knowledgeCategory.create({ data: { name: 'General', slug: 'general' }});
   await prisma.knowledgeArticle.create({
     data: { categoryId: cat.id, title: 'Mula Guna Sistem', slug: 'mula-guna', bodyMarkdown: '# Selamat datang', isPublished: true }
   });
 
-  // Customer + Tickets
   const cust = await prisma.customer.create({ data: { name: 'Ahmad', email: 'ahmad@example.com', phone: '0123456789' }});
   const t1 = await prisma.ticket.create({
     data: {
@@ -47,11 +43,10 @@ async function main() {
     data: { ticketId: t1.id, authorUserId: admin.id, body: 'Kami sedang semak isu ini.', isInternal: false }
   });
 
-  // Sell: lead -> contact + deal sample
   const lead = await prisma.lead.create({ data: { name: 'Siti', company: 'ABC Sdn Bhd', email: 'siti@abc.com', ownerId: admin.id }});
   const customer2 = await prisma.customer.create({ data: { name: 'Siti', email: 'siti@abc.com', company: 'ABC Sdn Bhd' }});
   const contact = await prisma.contact.create({ data: { customerId: customer2.id, ownerId: admin.id }});
-  await prisma.deal.create({
+  const deal = await prisma.deal.create({
     data: {
       contactId: contact.id,
       title: 'Langganan Tahunan',
@@ -61,7 +56,15 @@ async function main() {
     }
   });
 
-  // Macros & Triggers
+  await prisma.activity.create({
+    data: {
+      type: ActivityType.NOTE,
+      note: 'Hubungi client untuk demo minggu depan',
+      ownerId: admin.id,
+      dealId: deal.id
+    }
+  });
+
   await prisma.macro.create({
     data: { title: 'Reset Password SOP', actions: { setStatus: 'PENDING', addTags: ['howto'], cannedReply: 'Sila ikut langkah reset kata laluan...' } }
   });
@@ -76,3 +79,4 @@ async function main() {
 }
 
 main().then(() => prisma.$disconnect()).catch(e => { console.error(e); process.exit(1); });
+
